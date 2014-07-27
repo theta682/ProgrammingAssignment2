@@ -1,28 +1,29 @@
-## Put comments here that give an overall description of what your
-## functions do
+## This module provides a mechanism to cache results of a matrix inverting
 
-## Write a short comment describing this function
+## makeCacheMatrix function add caching to a matrix
 
-makeCacheMatrix <- function(x = matrix()) {
-  m <- NULL
-  set <- function(y){
-    x <<- y
-    m <<- NULL
+makeCacheMatrix <- function(m = matrix()) {
+  im <- NULL
+  set <- function(y) {
+    m <<- y
+    im <<- NULL
   }
-  get <- function() x
-  setinv <- function(inv) m <<- inv
-  getinv <- function() m
-  list(x = x, set = set, get = get, setinv = setinv, getinv = getinv)
+  get <- function() m
+  setinv <- function(y) im <<- y
+  getinv <- function() im
+  cacheSolve <- function() {
+    if(!is.null(im)) return(im)
+    im <<- solve(m)
+    return(im)
+  }
+  list(set = set,
+       get = get,
+       setinv = setinv,
+       getinv = getinv,
+       cacheSolve = cacheSolve)
 }
 
+## cacheSolve function is used to get inverted matrix using hidden method
+## of object returned by makeCacheMatrix
 
-## Write a short comment describing this function
-
-cacheSolve <- function(x, ...) {
-  m <- x$getinv()
-  if(!is.null(m)) return(m)
-  data <- x$get()
-  m <- solve(data)
-  x$setinv(m)
-  m
-}
+cacheSolve <- function(m, ...) m$cacheSolve()
